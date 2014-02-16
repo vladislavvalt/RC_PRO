@@ -8,7 +8,7 @@ __author__ = 'vladvalt'
 
 def checkers():
     root = Tk()
-    print 'lol'
+    print('lol')
     app = CheckersBoardUI(master=root, controller=None)
     root.mainloop()
 
