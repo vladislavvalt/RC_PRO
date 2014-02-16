@@ -7,7 +7,7 @@ class ChooseGameController:
         pass
 
     def reversi_select(self):
-        print 'choose reversi!'
+        print('choose reversi!')
 
     def checkers_select(self):
-        print 'choose checkers!'
+        print('choose checkers!')
