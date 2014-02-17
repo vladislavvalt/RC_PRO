@@ -7,7 +7,7 @@ __author__ = 'vladvalt'
 class BoardCommonUI(Frame):
 
     def mouseOver(self, event):
-        print "aaaa"
+        print("aaaa")
 
     def initUI(self):
 
