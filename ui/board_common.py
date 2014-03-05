@@ -6,13 +6,9 @@ __author__ = 'vladvalt'
 
 class BoardCommonUI(Frame):
 
-    def mouseOver(self, event):
-        print("aaaa")
-
     def initUI(self):
 
         self.right_menu = Frame(self)
-        self.right_menu.bind("<Enter>", self.mouseOver)
         self.right_menu.config({"bg": "brown"})
         self.right_menu.pack(fill=BOTH, expand=TRUE, side=RIGHT, anchor=W)
         self.right_menu.update()
@@ -36,6 +32,7 @@ class BoardCommonUI(Frame):
                     color = "yellow"
                 self.cells[i][j] = Canvas(self.grid, bg=color, height=30, width=10, borderwidth=0, highlightthickness=0)
                 self.cells[i][j].grid(row=i, column=j, sticky=N+S+E+W)
+                self.cells[i][j].bind("<Button-1>", lambda event, x=i, y=j: controller.mouse_click_on_cell_pressed(event, x, y))
 
 
         for x in range(self.numberOfRows):

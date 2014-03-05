@@ -13,6 +13,11 @@ class CommonBoardController:
         self.model = None
         self.img_size = 32
 
+    def mouse_click_on_cell_pressed(self, event, x, y):
+        print "click ON CELL"
+        print "x = ", x
+        print "y = ", y
+
     #just derive it
     def fill_board(self):
         #TODO clear all this stuff later
