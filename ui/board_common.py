@@ -32,7 +32,7 @@ class BoardCommonUI(Frame):
                     color = "yellow"
                 self.cells[i][j] = Canvas(self.grid, bg=color, height=30, width=10, borderwidth=0, highlightthickness=0)
                 self.cells[i][j].grid(row=i, column=j, sticky=N+S+E+W)
-                self.cells[i][j].bind("<Button-1>", lambda event, x=i, y=j: controller.on_cell_click(event, x, y))
+                self.cells[i][j].bind("<Button-1>", lambda event, x=i, y=j: self.controller.on_cell_click(event, x, y))
 
 
         for x in range(self.numberOfRows):
@@ -53,6 +53,7 @@ class BoardCommonUI(Frame):
     def __init__(self, master, controller):
         Frame.__init__(self, master)
         self.parent = master
+        self.controller = controller
         controller.set_board(self)
         self.parent.title('Board common')
         #self.parent.config({"bg": "grey"})

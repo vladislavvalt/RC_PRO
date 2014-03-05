@@ -11,14 +11,16 @@ FILLERS = {"checker_white": "Apple.png",
 
 IMAGE_LOCATION = os.path.join(os.path.dirname(__file__), '../ui/pictures/')
 
+GAME_MODES = {"playerVSPlayer": 1, "playerVsPRO": 2, "proVSEnemy": 3}
+
 
 class CommonBoardController:
 
     def __init__(self, model):
-        self.empty = 1000500
         self.board = None
-        self.model = None
+        self.model = model
         self.img_size = 32
+        self.game_mode = GAME_MODES["playerVSPlayer"]
 
     #just derive it
     def fill_board(self):

@@ -13,6 +13,7 @@ def checkers():
     model = CheckersGameModel()
     controller = CheckersBoardController(model=model)
     app = BoardCommonUI(master=root, controller=controller)
+    controller.fill_board()
     root.mainloop()
 
 checkers()
