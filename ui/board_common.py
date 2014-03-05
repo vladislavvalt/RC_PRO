@@ -34,11 +34,9 @@ class BoardCommonUI(Frame):
                     color = "brown"
                 else:
                     color = "yellow"
-                #self.cells[i][j] = Label(self.grid, bg=color)
-                self.cells[i][j] = LabelFrame(self.grid, bg=color)
+                self.cells[i][j] = Canvas(self.grid, bg=color, height=30, width=10, borderwidth=0, highlightthickness=0)
                 self.cells[i][j].grid(row=i, column=j, sticky=N+S+E+W)
-                ll = Label(self.cells[i][j], bg="yellow")
-                ll.pack()
+
 
         for x in range(self.numberOfRows):
           Grid.columnconfigure(self.grid, x, weight=1)
@@ -79,4 +77,5 @@ root = Tk()
 
 controller = CommonBoardController()
 app = BoardCommonUI(master=root, controller=controller)
+controller.fill_board()
 root.mainloop()

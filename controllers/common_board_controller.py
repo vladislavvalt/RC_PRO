@@ -1,16 +1,27 @@
+from Tkconstants import NW, N
+from Tkinter import Label, PhotoImage, Canvas
+from PIL import Image, ImageTk
+import numpy as np
 __author__ = 'vladvalt'
 
 
 class CommonBoardController:
 
     def __init__(self):
-        self.EMPTY = 1000500
+        self.empty = 1000500
         self.board = None
         self.model = None
+        self.img_size = 32
 
     #just derive it
     def fill_board(self):
-        pass
+        #TODO clear all this stuff later
+        image = Image.open("pictures/Apple.png")
+        photo = ImageTk.PhotoImage(image)
+        for i in range(self.board.numberOfRows):
+            self.board.cells[i][i].create_image(self.img_size, self.img_size, image=photo)
+            #python bug force us to keep reference
+            self.board.cells[0][0].image=photo
 
     def set_board(self, board):
         self.board = board
