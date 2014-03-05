@@ -32,7 +32,7 @@ class BoardCommonUI(Frame):
                     color = "yellow"
                 self.cells[i][j] = Canvas(self.grid, bg=color, height=30, width=10, borderwidth=0, highlightthickness=0)
                 self.cells[i][j].grid(row=i, column=j, sticky=N+S+E+W)
-                self.cells[i][j].bind("<Button-1>", lambda event, x=i, y=j: controller.mouse_click_on_cell_pressed(event, x, y))
+                self.cells[i][j].bind("<Button-1>", lambda event, x=i, y=j: controller.on_cell_click(event, x, y))
 
 
         for x in range(self.numberOfRows):
@@ -72,7 +72,12 @@ class BoardCommonUI(Frame):
 ###TODO remove it when necessary
 root = Tk()
 
-controller = CommonBoardController()
+controller = CommonBoardController(model=None)
 app = BoardCommonUI(master=root, controller=controller)
 controller.fill_board()
+controller.clear_cell(1, 1)
+controller.fill_cell(2, 4, "checker_white")
+controller.fill_cell(2, 5, "checker_black")
+controller.modify_cell(0, 0, "checker_king_white")
+controller.change_cell_color(3, 3, "green")
 root.mainloop()

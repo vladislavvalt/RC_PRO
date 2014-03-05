@@ -5,5 +5,5 @@ __author__ = 'vladvalt'
 
 class CheckersBoardController(CommonBoardController):
 
-    def __init__(self):
-        pass
+    def __init__(self, model):
+        CommonBoardController.__init__(self, model=model)

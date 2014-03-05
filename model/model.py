@@ -1,10 +1,12 @@
 __author__ = 'danylo'
 
+BOARD_SIZE = 64
+
 
 class GameModel:
 
     def create_board(self):
-        board_position = [0 for i in range(64)]
+        board_position = [0 for i in range(BOARD_SIZE)]
         board_position[28] = 1
         board_position[27] = 1
         board_position[36] = 1
@@ -38,15 +40,15 @@ class GameModel:
     #TODO implement method move in derivative class
 
 
-board_position = [0 for i in range(64)]
-board_position[28] = 1
-board_position[27] = 1
-board_position[36] = 1
-board_position[35] = 1
-
-
-for i in range(8):
-    x = i * 8
-    print ''
-    for j in range(8):
-        print board_position[x + j],
+#board_position = [0 for i in range(64)]
+#board_position[28] = 1
+#board_position[27] = 1
+#board_position[36] = 1
+#board_position[35] = 1
+#
+#
+#for i in range(8):
+#    x = i * 8
+#    print ''
+#    for j in range(8):
+#        print board_position[x + j],

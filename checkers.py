@@ -1,5 +1,7 @@
 from Tkinter import Tk
-from ui.checkers_board import CheckersBoardUI
+from controllers.checkers_board_controller import CheckersBoardController
+from model.checkers_model import CheckersGameModel
+from ui.board_common import BoardCommonUI
 
 __author__ = 'vladvalt'
 
@@ -8,8 +10,9 @@ __author__ = 'vladvalt'
 
 def checkers():
     root = Tk()
-    print('lol')
-    app = CheckersBoardUI(master=root, controller=None)
+    model = CheckersGameModel()
+    controller = CheckersBoardController(model=model)
+    app = BoardCommonUI(master=root, controller=controller)
     root.mainloop()
 
 checkers()
