@@ -71,14 +71,14 @@ class BoardCommonUI(Frame):
         self.initUI()
 
 ###TODO remove it when necessary
-root = Tk()
-
-controller = CommonBoardController(model=None)
-app = BoardCommonUI(master=root, controller=controller)
-controller.fill_board()
-controller.clear_cell(1, 1)
-controller.fill_cell(2, 4, "checker_white")
-controller.fill_cell(2, 5, "checker_black")
-controller.modify_cell(0, 0, "checker_king_white")
-controller.change_cell_color(3, 3, "green")
-root.mainloop()
+#root = Tk()
+#
+#controller = CommonBoardController(model=None)
+#app = BoardCommonUI(master=root, controller=controller)
+#controller.fill_board()
+#controller.clear_cell(1, 1)
+#controller.fill_cell(2, 4, "checker_white")
+#controller.fill_cell(2, 5, "checker_black")
+#controller.modify_cell(0, 0, "checker_king_white")
+#controller.change_cell_color(3, 3, "green")
+#root.mainloop()

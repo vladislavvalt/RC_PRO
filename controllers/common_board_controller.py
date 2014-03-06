@@ -3,7 +3,7 @@ from PIL import Image, ImageTk
 __author__ = 'vladvalt'
 
 FILLERS = {"checker_white": "Apple.png",
-           "checker_black": "Apple.png",
+           "checker_black": "Vista.png",
            "checker_king_white": "Apple.png",
            "checker_black_black": "Apple.png",
            "reversi_cross": "Apple.png",
