@@ -164,7 +164,7 @@ class CheckersGameModel(GameModel):
         return available_moves
 
     def is_free_to_diselect(self):
-        return not self.last_move_type == MOVE_TYPES["attack"] and self.should_continue_atack()
+        return not (self.last_move_type == MOVE_TYPES["attack"] and self.should_continue_atack())
 
     def should_continue_atack(self):
         return self.get_move_type(self.last_move[0], self.last_move[1]) == MOVE_TYPES["attack"]

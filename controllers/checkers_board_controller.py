@@ -46,6 +46,7 @@ class CheckersBoardController(CommonBoardController):
                 available_moves = self.model.get_available_moves(x, y)
                 for a in available_moves:
                     self.change_cell_color(a[0], a[1], AVAILABLE_MOVE_COLOR)
+                self.change_cell_color(x, y, AVAILABLE_MOVE_COLOR)
                 self.last_selected = (x, y)
                 self.state = STATES["checker_selected"]
 
@@ -69,6 +70,8 @@ class CheckersBoardController(CommonBoardController):
                                 if self.model.should_continue_atack():
                                     for a in available_moves:
                                         self.change_cell_color(a[0], a[1], CHECKERS_BACKGROUND_COLOR)
+                                    self.change_cell_color(self.last_selected[0], self.last_selected[1], CHECKERS_BACKGROUND_COLOR)
+                                    self.change_cell_color(x, y, AVAILABLE_MOVE_COLOR)
                                     available_moves = self.model.get_available_moves(x, y)
                                     for a in available_moves:
                                         self.change_cell_color(a[0], a[1], AVAILABLE_MOVE_COLOR)
@@ -79,6 +82,7 @@ class CheckersBoardController(CommonBoardController):
                     if should_move_to_none_state:
                         for a in available_moves:
                             self.change_cell_color(a[0], a[1], CHECKERS_BACKGROUND_COLOR)
+                        self.change_cell_color(self.last_selected[0], self.last_selected[1], CHECKERS_BACKGROUND_COLOR)
                         self.state = STATES["None"]
 
         elif self.game_mode == GAME_MODES["playerVsPRO"]:
