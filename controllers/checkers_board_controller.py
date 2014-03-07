@@ -56,7 +56,7 @@ class CheckersBoardController(CommonBoardController):
                     should_move_to_none_state = False
                     available_moves = self.model.get_available_moves(self.last_selected[0], self.last_selected[1])
 
-                    if self.last_selected[0] == x and self.last_selected[1] == y and self.model.is_free_to_diselect():
+                    if self.last_selected[0] == x and self.last_selected[1] == y and self.model.is_free_to_deselect():
                         should_move_to_none_state = True
 
                     elif (x, y) in self.model.get_available_moves(self.last_selected[0], self.last_selected[1]):
@@ -67,7 +67,7 @@ class CheckersBoardController(CommonBoardController):
                                 should_move_to_none_state = True
                             elif self.model.last_move_type == MOVE_TYPES["attack"]:
                                 self.attack_move(self.last_selected[0], self.last_selected[1], x, y)
-                                if self.model.should_continue_atack():
+                                if self.model.should_continue_attack():
                                     for a in available_moves:
                                         self.change_cell_color(a[0], a[1], CHECKERS_BACKGROUND_COLOR)
                                     self.change_cell_color(self.last_selected[0], self.last_selected[1], CHECKERS_BACKGROUND_COLOR)

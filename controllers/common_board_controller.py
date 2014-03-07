@@ -4,8 +4,8 @@ __author__ = 'vladvalt'
 
 FILLERS = {"checker_white": "Apple.png",
            "checker_black": "Vista.png",
-           "checker_king_white": "Apple.png",
-           "checker_black_black": "Apple.png",
+           "checker_king_white": "king_Apple.png",
+           "checker_king_black": "king_natural_Apple.png",
            "reversi_cross": "Apple.png",
            "reversi_zero": "Apple.png"}
 

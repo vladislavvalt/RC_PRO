@@ -80,5 +80,6 @@ class BoardCommonUI(Frame):
 #controller.fill_cell(2, 4, "checker_white")
 #controller.fill_cell(2, 5, "checker_black")
 #controller.modify_cell(0, 0, "checker_king_white")
+#controller.modify_cell(7, 7, "checker_king_black")
 #controller.change_cell_color(3, 3, "green")
 #root.mainloop()
