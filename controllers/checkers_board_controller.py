@@ -19,6 +19,7 @@ class CheckersBoardController(CommonBoardController):
         if self.game_mode == GAME_MODES["playerVSPlayer"]:
             self.state = STATES["None"]
             self.last_selected = None
+            self.the_end = False
 
     def fill_board(self):
         self.board.parent.title('Checkers')
@@ -84,6 +85,15 @@ class CheckersBoardController(CommonBoardController):
                             self.change_cell_color(a[0], a[1], CHECKERS_BACKGROUND_COLOR)
                         self.change_cell_color(self.last_selected[0], self.last_selected[1], CHECKERS_BACKGROUND_COLOR)
                         self.state = STATES["None"]
+
+            if not self.the_end:
+                if self.model.is_game_over:
+                    self.write_to_console("Game over!")
+                    if self.model.winner == 0:
+                        self.write_to_console("Standoff...")
+                    else:
+                        self.write_to_console("The winner is player " + str(self.model.winner))
+                    self.the_end = True
 
         elif self.game_mode == GAME_MODES["playerVsPRO"]:
             pass

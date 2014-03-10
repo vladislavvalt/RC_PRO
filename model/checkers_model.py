@@ -12,6 +12,8 @@ DELTA = [
     (-1, -1)
 ]
 
+MAX_NUMBER_OF_SIMPLE_MOVES_IN_SERIES = 30
+
 
 class CheckersGameModel(GameModel):
 
@@ -19,7 +21,16 @@ class CheckersGameModel(GameModel):
         self.board_size= 8
         self.last_move_type = MOVE_TYPES["simple"]
         self.last_move = None
+        self.number_of_simple_moves_in_series = 0
         GameModel.__init__(self)
+
+    def number_of_checkers_left(self, player):
+        number = 0
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                if self.board_position[i][j] == player or self.board_position[i][j] == player + 2:
+                    number += 1
+        return number
 
     def create_board(self):
         self.board_position = [[0 for j in range(self.board_size)] for i in range(self.board_size)]
@@ -60,8 +71,23 @@ class CheckersGameModel(GameModel):
                 if is_ok:
                     self.last_move = (x_new, y_new)
                     self.last_move_type = move_type
+                    self.check_for_game_end()
                     return True
         return False
+
+    def check_for_game_end(self):
+        if self.number_of_simple_moves_in_series >= MAX_NUMBER_OF_SIMPLE_MOVES_IN_SERIES:
+                        self.is_game_over = True
+                        self.winner = 0
+        if self.number_of_checkers_left(1) == 0:
+            self.is_game_over = True
+            self.winner = 2
+        elif self.number_of_checkers_left(2) == 0:
+            self.is_game_over = True
+            self.winner = 1
+        elif not self.is_able_to_move_any():
+            self.is_game_over = True
+            self.winner = 3 - self.current_player
 
     def promote_checker(self, x, y):
         if not self.is_figure_king(x, y):
@@ -73,6 +99,7 @@ class CheckersGameModel(GameModel):
         self.board_position[x][y] = 0
         self.promote_checker(x_new, y_new)
         self.current_player = 3 - self.current_player
+        self.number_of_simple_moves_in_series += 1
 
     def perform_attack_move(self, x, y, x_new, y_new):
         self.board_position[x_new][y_new] = self.board_position[x][y]
@@ -83,9 +110,18 @@ class CheckersGameModel(GameModel):
         self.promote_checker(x_new, y_new)
         if self.get_move_type(x_new, y_new) == MOVE_TYPES["simple"]:
             self.current_player = 3 - self.current_player
+        self.number_of_simple_moves_in_series = 0
+
+    def is_able_to_move_any(self):
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                if self.board_position[i][j] != 0:
+                    if self.is_able_to_move(i, j):
+                        return True
+        return False
 
     def is_able_to_move(self, x, y):
-        if self.is_figure_of_current_player(x, y):
+        if not self.is_game_over and self.is_figure_of_current_player(x, y):
             if self.should_attack_on_this_move():
                 if self.get_move_type(x, y) == MOVE_TYPES["attack"]:
                     return True
@@ -96,7 +132,7 @@ class CheckersGameModel(GameModel):
     def get_move_type(self, x, y):
         curr_f = self.board_position[x][y]
         if self.is_figure_king(x, y):
-            n = max(self.board_size - x, x + 1)
+            n = max(self.board_size - x + 1, x + 1)
             for d in DELTA:
                 for i in range(1, n):
                     if x + i * d[0] < self.board_size - 1 and y + i * d[1] < self.board_size - 1:
@@ -162,7 +198,7 @@ class CheckersGameModel(GameModel):
         move_type = self.get_move_type(x, y)
         if move_type == MOVE_TYPES["simple"]:
             if self.is_figure_king(x, y):
-                n = max(self.board_size - x, x + 1)
+                n = max(self.board_size - x + 1, x + 1)
                 for d in DELTA:
                     for i in range(1, n):
                         if x + i * d[0] < self.board_size and y + i * d[1] < self.board_size:
@@ -177,7 +213,7 @@ class CheckersGameModel(GameModel):
                     available_moves.append((x + self.get_move_direction(), y + 1))
         elif move_type == MOVE_TYPES["attack"]:
             if self.is_figure_king(x, y):
-                n = max(self.board_size - x, x + 1)
+                n = max(self.board_size - x + 1, x + 1)
                 for d in DELTA:
                     for i in range(1, n):
                         if x + i * d[0] < self.board_size - 1 and y + i * d[1] < self.board_size - 1:
@@ -187,8 +223,14 @@ class CheckersGameModel(GameModel):
                                         break
                                     else:
                                         if self.board_position[x + (i + 1) * d[0]][y + (i + 1) * d[1]] == 0:
-                                            available_moves.append((x + (i + 1) * d[0], y + (i + 1) * d[1]))
-                                            #TODO!!!!
+                                            for j in range(i+1, n):
+                                                if x + j * d[0] < self.board_size and y + j * d[1] < self.board_size:
+                                                    if x + j * d[0] >= 0 and y + j * d[1] >= 0:
+                                                        if self.board_position[x + j * d[0]][y + j * d[1]] == 0:
+                                                            available_moves.append((x + j * d[0], y + j * d[1]))
+                                                        else:
+                                                            break
+                                            break
                                         else:
                                             break
             else:
@@ -212,6 +254,14 @@ class CheckersGameModel(GameModel):
             if (self.board_position[a][b] - self.board_position[x][y]) % 2 == 0:
                 return True
         return False
+
+    def number_of_checkers_left(self, player_num):
+        number = 0
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                if self.board_position[i][j] == player_num or self.board_position[i][j] == player_num + 2:
+                    number += 1
+        return number
 
     def is_free_to_deselect(self):
         return not (self.last_move_type == MOVE_TYPES["attack"] and self.should_continue_attack())

@@ -31,6 +31,10 @@ class CommonBoardController:
             self.board.cells[i][i].create_image(self.img_size, self.img_size, image=photo)
             #python bug force us to keep reference
             self.board.cells[i][i].image=photo
+            self.write_to_console("Cell number " + str(i) + " added")
+
+    def write_to_console(self, txt):
+        self.board.console.insert("1.0", txt + '\n')
 
     def set_board(self, board):
         self.board = board

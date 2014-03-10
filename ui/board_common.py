@@ -17,10 +17,10 @@ class BoardCommonUI(Frame):
         self.bottom_console.config(bg="green")
         self.bottom_console.pack(fill=BOTH, expand=TRUE, side=BOTTOM)
 
-        self.console = Text(self.bottom_console, height=5, state=DISABLED)
+        self.console = Text(self.bottom_console, height=5)
         self.console.pack(padx=2, pady=2)
 
-        self.grid=Frame(self)
+        self.grid = Frame(self)
         self.grid.pack(fill=BOTH, expand=TRUE, side=LEFT, ipadx=100, ipady=150, padx=25, pady=25)
 
         for i in range(self.numberOfRows):
@@ -34,11 +34,10 @@ class BoardCommonUI(Frame):
                 self.cells[i][j].grid(row=i, column=j, sticky=N+S+E+W)
                 self.cells[i][j].bind("<Button-1>", lambda event, x=i, y=j: self.controller.on_cell_click(event, x, y))
 
-
         for x in range(self.numberOfRows):
-          Grid.columnconfigure(self.grid, x, weight=1)
+            Grid.columnconfigure(self.grid, x, weight=1)
         for y in range(self.numberOfRows):
-          Grid.rowconfigure(self.grid, y, weight=1)
+            Grid.rowconfigure(self.grid, y, weight=1)
 
     def centerWindow(self):
         w = 800
@@ -59,7 +58,7 @@ class BoardCommonUI(Frame):
         #self.parent.config({"bg": "grey"})
         self.numberOfRows = 8
         self.cells = [[None for col in range(self.numberOfRows)] for row in range(self.numberOfRows)]
-        self.config({"bg": "red"})
+        self.config({"bg": "chocolate"})
         self.pack(fill=BOTH, expand=True)
 
         self.grid = None
