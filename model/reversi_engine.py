@@ -8,18 +8,18 @@ int_max = 1000000000
 int_min = -int_max
 
 
-# Reversi game board
-class ReversiGame(object):
+# Reversi game engine
+class ReversiEngine(object):
     # States of a cell and player titles
     empty = 0
     first = 1
     second = 2
 
     # List of possible directions from the cell
-    directions = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
+    directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
     # A special index for specifying pass
-    pass_move = [-1, -1]
+    pass_move = (-1, -1)
 
     # Construct a game board
     def __init__(self, board_size):
@@ -43,8 +43,11 @@ class ReversiGame(object):
         # Initialize score for both players
         self.score = [2, 2]
 
-        # Calculate points for victory
-        self.victory_score = self.size ** 4
+        # Bonus points for each stable cell
+        self.stability_bonus = 2 * self.size
+
+        # Points for victory
+        self.victory_score = int_max
 
     # Represent a game board as a string
     def __repr__(self):
@@ -162,13 +165,27 @@ class ReversiGame(object):
         # Return difference between the corresponding scores
         return self.score[player - 1] - self.score[self.get_opponent(player) - 1]
 
+    # Get heuristic score of corner cells
+    def get_corner_cells_score_difference(self, player):
+        opponent = self.get_opponent(player)
+
+        # Difference between the number of the player's and opponent's corner cells
+        corners_count = 0
+
+        # Check all corner cells
+        for c in self.get_corners():
+            if self.board[c[0]][c[1]] == player:
+                corners_count += 1
+            elif self.board[c[0]][c[1]] == opponent:
+                corners_count -= 1
+
+        # Each corner cell costs additional bonus points
+        return self.stability_bonus * corners_count
+
     # Get heuristic score of stable edges on current board
     def get_stable_cells_score_difference(self, player):
-        # Bonus for a stable cell
-        stability_bonus = self.size / 2
-
-        # All stable cells provide the same score bonus
-        return stability_bonus * (
+        # All stable cells provide additional bonus score
+        return self.stability_bonus * (
             len(self.get_stable_cells(player)) - len(self.get_stable_cells(self.get_opponent(player))))
 
     # Get heuristic score for the victory of one of the players
@@ -195,8 +212,8 @@ class ReversiGame(object):
     # Get heuristic value of current position
     def get_board_heuristics(self, player):
         # The score is determined by current score, the number of stable cells and state of the game
-        return self.get_score_difference(player) + self.get_stable_cells_score_difference(
-            player) + self.get_victory_score_difference(player)
+        return self.get_score_difference(player) + self.get_corner_cells_score_difference(
+            player) + self.get_stable_cells_score_difference(player) + self.get_victory_score_difference(player)
 
     # Check if the cell is on the board
     def is_on_board(self, x, y):
@@ -217,7 +234,7 @@ class ReversiGame(object):
     # Get the list of four corner cells
     def get_corners(self):
         max_index = self.size - 1
-        return [[0, 0], [0, max_index], [max_index, 0], [max_index, max_index]]
+        return [(0, 0), (0, max_index), (max_index, 0), (max_index, max_index)]
 
     # Get stable cells in the direction from corner
     def get_stable_cells_on_edges_in_direction_from_corner(self, player, x, y, dx, dy):
@@ -235,7 +252,7 @@ class ReversiGame(object):
         # Move in direction until another corner or another player's cell is reached
         while self.is_on_board(nx, ny) and self.board[nx][ny] == player and not self.is_on_corner(nx, ny):
             # Save the stable cell
-            stable.append([nx, ny])
+            stable.append((nx, ny))
 
             # Progress in the same direction
             nx += dx
@@ -260,7 +277,7 @@ class ReversiGame(object):
         while self.is_on_board(nx, ny):
             # Save the stable cell if it belongs to the player
             if self.board[nx][ny] == player:
-                player_cells.append([nx, ny])
+                player_cells.append((nx, ny))
             # If an empty cell has been found, there's no guarantees of stability
             elif self.board[nx][ny] == self.empty:
                 return []
@@ -278,7 +295,7 @@ class ReversiGame(object):
         stable_cells = []
 
         # Directions from corners to stable neighbour cells
-        corner_directions = [[-1, 0], [0, -1], [0, 1], [1, 0]]
+        corner_directions = [(-1, 0), (0, -1), (0, 1), (1, 0)]
 
         # Corners are the first candidates
         for corner in self.get_corners():
@@ -316,7 +333,7 @@ class ReversiGame(object):
         for x in range(self.size):
             for y in range(self.size):
                 if self.board[x][y] == self.empty:
-                    free_cells.append([x, y])
+                    free_cells.append((x, y))
         return free_cells
 
     # Get a list of valid moves for current player
@@ -398,7 +415,7 @@ class ReversiGame(object):
             # Iterate through all cells in current direction belonging to the opponent
             while self.is_on_board(nx, ny) and self.board[nx][ny] == opponent:
                 self.board[nx][ny] = player
-                flipped_cells.append([nx, ny])
+                flipped_cells.append((nx, ny))
                 nx += dx
                 ny += dy
 
@@ -430,7 +447,7 @@ class ReversiGame(object):
             # point in searching it further, so stop searching
             # and yield the evaluation.
             if value > max_value:
-                evaluations.append([move, value])
+                evaluations.append((move, value))
                 continue
 
             # Current move is worse than ones already found, skip it
@@ -438,11 +455,11 @@ class ReversiGame(object):
                 continue
 
             max_so_far = max(value, max_so_far)
-            evaluations.append([move, value])
+            evaluations.append((move, value))
 
         if len(valid_moves) == 0:
-            evaluations.append([self.pass_move, self.get_move_value(player, self.pass_move[0], self.pass_move[1],
-                                                                    search_depth - 1, -max_so_far)])
+            evaluations.append((self.pass_move, self.get_move_value(player, self.pass_move[0], self.pass_move[1],
+                                                                    search_depth - 1, -max_so_far)))
 
         return evaluations
 
@@ -482,8 +499,8 @@ class ReversiGame(object):
 
         # If there are no possible moves, the player has to pass
         if len(moves) == 0:
-            return [self.pass_move,
-                    self.get_move_value(player, self.pass_move[0], self.pass_move[1], search_depth, int_max)]
+            return (self.pass_move,
+                    self.get_move_value(player, self.pass_move[0], self.pass_move[1], search_depth, int_max))
         # Only one move is possible, there's no need to search
         elif len(moves) == 1:
             return moves[0]
@@ -509,10 +526,12 @@ class ReversiGame(object):
 
             # Randomly return any of the best moves
             rand_best_move = randrange(len(best_moves))
-            return [best_moves[rand_best_move], best_value]
+            print best_value
+            return best_moves[rand_best_move], best_value
 
 
-game = ReversiGame(8)
+"""
+game = ReversiEngine(8)
 
 cur_player = game.first
 
@@ -528,3 +547,4 @@ elif game.get_winner() == game.second:
     print "The second player has won!"
 else:
     print "Draw!"
+"""

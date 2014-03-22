@@ -1,47 +1,54 @@
 from model import GameModel
-from reversi import ReversiGame
+from reversi_engine import ReversiEngine
 
 __author__ = 'danylo'
 
 
-class ReversiGameModel(GameModel):
-    def __init__(self):
-        GameModel.__init__(self)
-        self.game = ReversiGame(8)
-        self.current_player = 0
+class ReversiGameModel():
+    def __init__(self, first_player):
+        self.board_size = 8
+        self.engine = ReversiEngine(self.board_size)
+        self.current_player = first_player
 
     def is_over(self):
-        return self.game.is_over()
+        return self.engine.is_over()
 
     def get_winner(self):
-        return self.game.get_winner()
+        return self.engine.get_winner()
 
     def get_current_player(self):
         return self.current_player
 
+    def get_current_opponent(self):
+        return self.engine.get_opponent(self.current_player)
+
     def get_available_moves(self):
-        return self.game.get_valid_moves(self.get_current_player())
+        return self.engine.get_valid_moves(self.current_player)
 
-    def get_cell_index(self, number):
-        return [number / self.game.size, number % self.game.size]
-
-    def get_cell(self, index):
-        return self.game.board[index / self.game.size][index % self.game.size]
+    def get_cell(self, x, y):
+        return self.engine.board[x][y]
 
     def move_human(self, x, y):
-        self.game.move(self.current_player, x, y)
+        self.engine.move(self.current_player, x, y)
+        self.current_player = self.engine.get_opponent(self.current_player)
 
     def move_computer(self, difficulty):
         # Search depth for ai
         search_depth = difficulty + 1
 
-        if difficulty < 2:
-            pass
-        elif difficulty == 2:
-            pass
-        else:
-            # Search depth can be increased by the end of the game
-            if self.game.cells_count - (self.game.score[0] + self.game.score[1]) < 2 * difficulty:
-                search_depth = self.game.cells_count - (self.game.score[0] + self.game.score[1])
+        # The number of empty cells
+        remaining_cells = self.engine.cells_count - (self.engine.score[0] + self.engine.score[1])
 
-        self.game.move_ai(self.current_player, search_depth)
+        if difficulty >= 2:
+            # Search depth can be increased by the end of the game
+            if remaining_cells < self.board_size + difficulty:
+                search_depth = remaining_cells
+            # Or it can be decreased at the beginning for performance reasons
+            elif remaining_cells > self.engine.cells_count / 2 and search_depth > 1:
+                search_depth -= 1
+
+        self.engine.move_ai(self.current_player, search_depth)
+        self.current_player = self.engine.get_opponent(self.current_player)
+
+    def move_enemy(self):
+        pass
