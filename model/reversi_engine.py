@@ -562,23 +562,3 @@ class ReversiEngine(object):
             # Randomly return any of the best moves
             rand_best_move = randrange(len(best_moves))
             return best_moves[rand_best_move], best_value
-
-
-"""
-game = ReversiEngine(8)
-
-cur_player = game.first
-
-while not game.is_over():
-    game.move_ai(cur_player, 4)
-    cur_player = game.get_opponent(cur_player)
-    print game
-
-print "The score is " + str(game.get_score_difference(game.first))
-if game.get_winner() == game.first:
-    print "The first player won!"
-elif game.get_winner() == game.second:
-    print "The second player has won!"
-else:
-    print "Draw!"
-"""

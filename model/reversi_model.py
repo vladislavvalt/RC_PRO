@@ -1,4 +1,3 @@
-from model import GameModel
 from reversi_engine import ReversiEngine
 
 __author__ = 'danylo'
@@ -42,27 +41,37 @@ class ReversiGameModel():
         self.engine.move(self.current_player, x, y)
         self.current_player = self.engine.get_opponent(self.current_player)
 
-    def move_computer(self):
-        # Search depth for ai
+    def get_search_depth(self, difficulty):
+        # Search depth directly depends on the difficulty level
         search_depth = self.difficulty + 1
 
-        # The number of empty cells
-        remaining_cells = self.engine.cells_count - (self.engine.score[0] + self.engine.score[1])
+        total_cells = self.engine.cells_count
+        filled_cells = self.engine.get_score(1) + self.engine.get_score(2)
+        empty_cells = total_cells - filled_cells
 
         # Tweaks for hard levels
         if self.difficulty >= 2:
-            # Number of free cells that require specific logic
-            threshold = self.board_size - 1
-            if self.difficulty > 4:
-                threshold += self.board_size
-            elif self.difficulty == 4 or self.difficulty == 3:
-                threshold += self.difficulty
+            # Search depth can be increased when most of the cells are filled
+            if empty_cells < filled_cells:
+                # Every 10% of filled cells after 50% increase the search depth by 1
+                search_depth += int(10 * (filled_cells / float(total_cells) - 0.5))
 
-            # Search depth can be increased by the end of the game
-            if remaining_cells <= threshold:
-                search_depth = remaining_cells
+            # It is possible to search to the end at some point
+            if search_depth < empty_cells:
+                threshold = self.board_size
+                if self.difficulty > 4:
+                    threshold += self.board_size
+                elif self.difficulty == 4 or self.difficulty == 3:
+                    threshold += self.difficulty
 
-        self.engine.move_ai(self.current_player, search_depth)
+                # Search depth can be increased by the end of the game
+                if empty_cells <= threshold:
+                    search_depth = empty_cells
+
+        return search_depth
+
+    def move_computer(self):
+        self.engine.move_ai(self.current_player, self.get_search_depth(self.difficulty))
         self.current_player = self.engine.get_opponent(self.current_player)
 
     def move_enemy(self):
