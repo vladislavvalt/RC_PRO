@@ -13,10 +13,9 @@ class ReversiBoardController(CommonBoardController):
     def __init__(self, model, mode):
         CommonBoardController.__init__(self, model=model)
         self.game_mode = mode
+        self.the_end = False
         if mode == GAME_MODES["playerVsPRO"]:
             self.computer = self.model.get_current_opponent()
-            self.difficulty = 3
-            self.the_end = False
 
     def fill_board(self):
         self.board.parent.title('Reversi')
@@ -32,14 +31,18 @@ class ReversiBoardController(CommonBoardController):
         if not self.model.is_over():
             available_moves = self.model.get_available_moves()
             for a in available_moves:
-                self.fill_cell(a[0], a[1], FILLER_MAP[3])
+                if not a == self.model.engine.pass_move:
+                    self.fill_cell(a[0], a[1], FILLER_MAP[3])
 
     def on_cell_click(self, event, x, y):
+        if self.the_end:
+            return
+
         if self.game_mode == GAME_MODES["playerVSPlayer"]:
             self.move_human(x, y)
         elif self.game_mode == GAME_MODES["playerVsPRO"]:
             if self.model.get_current_player() == self.computer:
-                self.move_computer(self.difficulty)
+                self.move_computer()
             else:
                 self.move_human(x, y)
 
@@ -59,9 +62,12 @@ class ReversiBoardController(CommonBoardController):
                 self.model.move_human(x, y)
                 self.fill_board()
             elif available_moves == [self.model.engine.pass_move]:
-                self.move_human(available_moves[0][0], available_moves[0][1])
-                self.write_to_console("Pass")
+                self.model.move_human(available_moves[0][0], available_moves[0][1])
+                self.write_to_console("The player passes")
 
-    def move_computer(self, difficulty):
-        self.model.move_computer(difficulty)
-        self.fill_board()
+    def move_computer(self):
+        if not self.model.is_over():
+            if self.model.get_available_moves() == [self.model.engine.pass_move]:
+                self.write_to_console("Computer passes")
+            self.model.move_computer()
+            self.fill_board()

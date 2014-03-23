@@ -43,11 +43,17 @@ class ReversiEngine(object):
         # Initialize score for both players
         self.score = [2, 2]
 
+        # Bonus points for each corner cell
+        self.corner_cell_bonus = self.size
+
         # Bonus points for each stable cell
-        self.stability_bonus = 2 * self.size
+        self.stability_bonus = self.size
 
         # Points for victory
         self.victory_score = int_max
+
+        # A stack of moves
+        self.moves_stack = []
 
     # Represent a game board as a string
     def __repr__(self):
@@ -128,6 +134,9 @@ class ReversiEngine(object):
                 self.score[player - 1] += 1
                 self.score[opponent - 1] -= 1
 
+        # Push the move into the moves stack
+        self.moves_stack.append([player, (x, y), flipped_cells])
+
         # Return the list of opponent's cells that have been flipped
         return flipped_cells
 
@@ -147,6 +156,17 @@ class ReversiEngine(object):
                 self.board[cell[0]][cell[1]] = opponent
                 self.score[player - 1] -= 1
                 self.score[opponent - 1] += 1
+
+    def undo_last_move(self):
+        # Check if there are moves in the stack
+        if len(self.moves_stack) == 0:
+            raise Exception("Moves stack is empty")
+
+        # Get the last move
+        last_move = self.moves_stack.pop(len(self.moves_stack) - 1)
+
+        # Undo the last move
+        self.undo_move(last_move[0], last_move[1][0], last_move[1][1], last_move[2])
 
     # Perform a move by current player using built-in AI
     def move_ai(self, player, search_depth):
@@ -180,7 +200,7 @@ class ReversiEngine(object):
                 corners_count -= 1
 
         # Each corner cell costs additional bonus points
-        return self.stability_bonus * corners_count
+        return self.corner_cell_bonus * corners_count
 
     # Get heuristic score of stable edges on current board
     def get_stable_cells_score_difference(self, player):
@@ -526,7 +546,6 @@ class ReversiEngine(object):
 
             # Randomly return any of the best moves
             rand_best_move = randrange(len(best_moves))
-            print best_value
             return best_moves[rand_best_move], best_value
 
 
