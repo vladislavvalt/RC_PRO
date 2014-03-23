@@ -12,7 +12,7 @@ FILLERS = {"checker_white": "Apple.png",
 
 IMAGE_LOCATION = os.path.join(os.path.dirname(__file__), '../ui/pictures/')
 
-GAME_MODES = {"playerVSPlayer": 1, "playerVsPRO": 2, "proVSEnemy": 3}
+GAME_MODES = {"playerVSPlayer": 1, "playerVsPRO": 2, "PROvsPRO": 3, "proVSEnemy": 4}
 
 
 class CommonBoardController:
@@ -22,6 +22,7 @@ class CommonBoardController:
         self.model = model
         self.img_size = 32
         self.game_mode = GAME_MODES["playerVSPlayer"]
+        self.insertion_index = 1.0
 
     #just derive it
     def fill_board(self):
@@ -35,7 +36,8 @@ class CommonBoardController:
             self.write_to_console("Cell number " + str(i) + " added")
 
     def write_to_console(self, txt):
-        self.board.console.insert("1.0", txt + '\n')
+        self.board.console.insert(self.insertion_index, txt + '\n')
+        self.insertion_index += 1
 
     def set_board(self, board):
         self.board = board
