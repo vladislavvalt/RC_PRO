@@ -51,7 +51,7 @@ class ReversiGameModel():
         # Tweaks for hard levels
         if self.difficulty >= 2:
             # Number of free cells that require specific logic
-            threshold = self.board_size
+            threshold = self.board_size - 1
             if self.difficulty > 4:
                 threshold += self.board_size
             elif self.difficulty == 4 or self.difficulty == 3:

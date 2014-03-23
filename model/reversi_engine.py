@@ -4,7 +4,7 @@ from random import randrange
 
 
 # Integer constants representing infinity
-int_max = 1000000000
+int_max = 1000000000000
 int_min = -int_max
 
 
@@ -43,14 +43,17 @@ class ReversiEngine(object):
         # Initialize score for both players
         self.score = [2, 2]
 
+        # Bonus for each available move
+        self.mobility_bonus = self.size ** 2
+
         # Bonus points for each corner cell
-        self.corner_cell_bonus = self.size
+        self.corner_cell_bonus = self.mobility_bonus ** 2
 
         # Bonus points for each stable cell
-        self.stability_bonus = self.size
+        self.stability_bonus = self.corner_cell_bonus
 
         # Points for victory
-        self.victory_score = int_max
+        self.victory_bonus = int_max / 2
 
         # A stack of moves
         self.moves_stack = []
@@ -87,6 +90,9 @@ class ReversiEngine(object):
         # The game is over if all cells are filled
         if self.score[0] + self.score[1] == self.cells_count:
             return True
+        # The game is over if one of the player has no cells left
+        elif self.score[0] == 0 or self.score[1] == 0:
+            return True
         # The game is over when none of the players can move
         else:
             return self.get_valid_moves(self.first) == [self.pass_move] and self.get_valid_moves(self.second) == [
@@ -108,7 +114,7 @@ class ReversiEngine(object):
                 return None
 
     # Perform a move
-    def move(self, player, x, y):
+    def move(self, player, x, y, push_stack=False):
         # Return an empty list if move is a pass
         if x == self.pass_move[0] and y == self.pass_move[1]:
             return []
@@ -116,9 +122,6 @@ class ReversiEngine(object):
         # Make sure the move is valid
         if not self.move_is_valid(player, x, y):
             raise Exception("Invalid move [" + str(x) + ", " + str(y) + "]")
-
-        # Other player
-        opponent = self.get_opponent(player)
 
         # Prepare a list of flipped cells
         flipped_cells = []
@@ -131,17 +134,16 @@ class ReversiEngine(object):
         for dx, dy in self.directions:
             for cell in self.flip_cells_in_direction(player, x, y, dx, dy):
                 flipped_cells.append(cell)
-                self.score[player - 1] += 1
-                self.score[opponent - 1] -= 1
 
         # Push the move into the moves stack
-        self.moves_stack.append([player, (x, y), flipped_cells])
+        if push_stack:
+            self.moves_stack.append([player, (x, y), flipped_cells])
 
         # Return the list of opponent's cells that have been flipped
         return flipped_cells
 
     # Return the board to the state before the move
-    def undo_move(self, player, x, y, flipped_cells):
+    def undo_move(self, player, x, y, flipped_cells, pop_stack=False):
         # The move needs to be undone only if it was not a pass
         if not (x == self.pass_move[0] and y == self.pass_move[1]):
             # Other player
@@ -156,6 +158,10 @@ class ReversiEngine(object):
                 self.board[cell[0]][cell[1]] = opponent
                 self.score[player - 1] -= 1
                 self.score[opponent - 1] += 1
+
+            # Pop the move from moves stack
+            if pop_stack:
+                self.moves_stack.pop(len(self.moves_stack) - 1)
 
     def undo_last_move(self):
         # Check if there are moves in the stack
@@ -183,7 +189,12 @@ class ReversiEngine(object):
     # Get the difference between the player's score and opponent's score
     def get_score_difference(self, player):
         # Return difference between the corresponding scores
-        return self.score[player - 1] - self.score[self.get_opponent(player) - 1]
+        return self.get_score(player) - self.get_score(self.get_opponent(player))
+
+    # Get the difference between the number of player's available moves and his opponent's available moves
+    def get_mobility_score_difference(self, player):
+        return self.mobility_bonus * (
+            len(self.get_valid_moves(player)) - len(self.get_valid_moves(self.get_opponent(player))))
 
     # Get heuristic score of corner cells
     def get_corner_cells_score_difference(self, player):
@@ -217,12 +228,13 @@ class ReversiEngine(object):
         # Return the value only if the game is over
         if self.is_over():
             winner = self.get_winner()
+            bonus_per_cell = self.victory_bonus / self.cells_count
 
             # The sign of victory score depends on the winner
             if winner == player:
-                return self.victory_score
+                return self.victory_bonus + bonus_per_cell * self.get_score_difference(player)
             elif winner == self.get_opponent(player):
-                return -self.victory_score
+                return -self.victory_bonus + bonus_per_cell * self.get_score_difference(self.get_opponent(player))
             else:
                 return 0
         # Return zero if the game is in progress
@@ -232,8 +244,9 @@ class ReversiEngine(object):
     # Get heuristic value of current position
     def get_board_heuristics(self, player):
         # The score is determined by current score, the number of stable cells and state of the game
-        return self.get_score_difference(player) + self.get_corner_cells_score_difference(
-            player) + self.get_stable_cells_score_difference(player) + self.get_victory_score_difference(player)
+        return self.get_score_difference(player) + self.get_mobility_score_difference(
+            player) + self.get_corner_cells_score_difference(player) + self.get_stable_cells_score_difference(
+            player) + self.get_victory_score_difference(player)
 
     # Check if the cell is on the board
     def is_on_board(self, x, y):
@@ -435,6 +448,8 @@ class ReversiEngine(object):
             # Iterate through all cells in current direction belonging to the opponent
             while self.is_on_board(nx, ny) and self.board[nx][ny] == opponent:
                 self.board[nx][ny] = player
+                self.score[player - 1] += 1
+                self.score[opponent - 1] -= 1
                 flipped_cells.append((nx, ny))
                 nx += dx
                 ny += dy

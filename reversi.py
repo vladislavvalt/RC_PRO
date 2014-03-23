@@ -9,10 +9,17 @@ __author__ = 'danfitel'
 ##The place to start reversi
 
 
+def get_reversi_model():
+    return ReversiGameModel(1, 2)
+
+
+def get_reversi_controller():
+    return ReversiBoardController(model=get_reversi_model(), mode=GAME_MODES["playerVsPRO"])
+
+
 def reversi():
     root = Tk()
-    model = ReversiGameModel(1, 2)
-    controller = ReversiBoardController(model=model, mode=GAME_MODES["playerVsPRO"])
+    controller = get_reversi_controller()
     app = BoardCommonUI(master=root, controller=controller)
     controller.fill_board()
     root.mainloop()
