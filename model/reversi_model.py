@@ -7,6 +7,7 @@ __author__ = 'danylo'
 class ReversiGameModel():
     def __init__(self, first_player, difficulty):
         self.board_size = 8
+        self.first_player = first_player
         self.difficulty = difficulty
         self.engine = ReversiEngine(self.board_size)
         self.current_player = first_player

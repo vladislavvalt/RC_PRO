@@ -15,7 +15,7 @@ class ReversiBoardController(CommonBoardController):
         CommonBoardController.__init__(self, model=model)
         self.game_mode = mode
         self.the_end = False
-        if mode == GAME_MODES["playerVsPRO"]:
+        if mode == GAME_MODES["playerVSPRO"]:
             self.computer = self.model.get_current_opponent()
 
     def fill_board(self):
@@ -42,7 +42,7 @@ class ReversiBoardController(CommonBoardController):
 
         if self.game_mode == GAME_MODES["playerVSPlayer"]:
             self.move_human(x, y)
-        elif self.game_mode == GAME_MODES["playerVsPRO"]:
+        elif self.game_mode == GAME_MODES["playerVSPRO"]:
             if self.model.get_current_player() == self.computer:
                 self.move_computer()
             else:

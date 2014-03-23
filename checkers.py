@@ -23,13 +23,13 @@ def checkers(game_bot):
     model = CheckersGameModel()
     game_bot.model = model
     controller = CheckersBoardController(model=model, bot=game_bot)
-    controller.game_mode = GAME_MODES["playerVsPRO"]
+    controller.game_mode = GAME_MODES["playerVSPRO"]
     controller.bot_move_delay = 0.3
     controller.should_show_bot_play_on_board = True
     controller.should_log_the_game = True
     app = BoardCommonUI(master=root, controller=controller)
     controller.fill_board()
-    if controller.game_mode == GAME_MODES["PROvsPRO"]:
+    if controller.game_mode == GAME_MODES["proVSPro"]:
         controller.start_bot_play()
 
     root.mainloop()
@@ -42,7 +42,7 @@ def improve_skill(bot, number_of_games):
         bot.model = model
         controller = CheckersBoardController(model=model, bot=bot)
         controller.bot_move_delay = 0
-        controller.game_mode = GAME_MODES["PROvsPRO"]
+        controller.game_mode = GAME_MODES["proVSPro"]
         controller.should_show_bot_play_on_board = False
         controller.should_log_the_game_on_board = False
         controller.should_log_the_game = True

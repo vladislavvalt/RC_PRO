@@ -14,7 +14,7 @@ def get_reversi_model():
 
 
 def get_reversi_controller():
-    return ReversiBoardController(model=get_reversi_model(), mode=GAME_MODES["playerVsPRO"])
+    return ReversiBoardController(model=get_reversi_model(), mode=GAME_MODES["playerVSPRO"])
 
 
 def reversi():

@@ -18,7 +18,7 @@ class CheckersBoardController(CommonBoardController):
 
     def __init__(self, model, bot):
         CommonBoardController.__init__(self, model=model)
-        self.game_mode = GAME_MODES["playerVsPRO"]
+        self.game_mode = GAME_MODES["playerVSPRO"]
         self.state = STATES["None"]
         self.last_selected = None
         self.the_end = False
@@ -78,11 +78,11 @@ class CheckersBoardController(CommonBoardController):
         bot_move_performer = BotMovePerformer()
         bot_move_performer.set_controller(self)
         bot_move_performer.start()
-        if self.game_mode == GAME_MODES["PROvsPRO"]:
+        if self.game_mode == GAME_MODES["proVSPro"]:
             bot_move_performer.join()
 
     def on_cell_click(self, event, x, y):
-        if self.game_mode == GAME_MODES["playerVSPlayer"] or self.game_mode == GAME_MODES["playerVsPRO"]:
+        if self.game_mode == GAME_MODES["playerVSPlayer"] or self.game_mode == GAME_MODES["playerVSPRO"]:
             if self.state == STATES["None"] and self.model.is_able_to_move(x, y):
 
                 available_moves = self.model.get_available_moves(x, y)
@@ -130,7 +130,7 @@ class CheckersBoardController(CommonBoardController):
                         self.change_cell_color(self.last_selected[0], self.last_selected[1], CHECKERS_BACKGROUND_COLOR)
                         self.state = STATES["None"]
 
-                    if self.game_mode == GAME_MODES["playerVsPRO"] and should_move_to_none_state and should_bot_move_after:
+                    if self.game_mode == GAME_MODES["playerVSPRO"] and should_move_to_none_state and should_bot_move_after:
                         self.perform_bot_move()
 
             if not self.the_end:
@@ -179,7 +179,7 @@ class CheckersBoardController(CommonBoardController):
                                 self.controller.write_to_console("The winner is player " + str(self.controller.model.winner))
                         self.controller.the_end = True
 
-        if self.game_mode == GAME_MODES["PROvsPRO"]:
+        if self.game_mode == GAME_MODES["proVSProPRO"]:
             bot_game_perofmer = BotGamePerformer()
             bot_game_perofmer.set_controller(self)
             bot_game_perofmer.start()
