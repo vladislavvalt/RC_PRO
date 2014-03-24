@@ -1,6 +1,6 @@
 from reversi_engine import ReversiEngine
 
-__author__ = 'danylo'
+__author__ = 'danylofitel'
 
 
 class ReversiGameModel():

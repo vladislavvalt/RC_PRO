@@ -4,9 +4,7 @@ from controllers.reversi_board_controller import ReversiBoardController
 from model.reversi_model import ReversiGameModel
 from ui.board_common import BoardCommonUI
 
-__author__ = 'danfitel'
-
-##The place to start reversi
+__author__ = 'danylofitel'
 
 
 def get_reversi_model():

@@ -1,4 +1,4 @@
-__author__ = "danylo"
+__author__ = "danylofitel"
 
 from random import randrange
 
@@ -35,25 +35,25 @@ class ReversiEngine(object):
             self.board.append([self.empty for i in range(self.size)])
 
         # Fill the four squares in the middle
-        self.board[self.size / 2 - 1][self.size / 2 - 1] = self.first
-        self.board[self.size / 2][self.size / 2] = self.first
-        self.board[self.size / 2 - 1][self.size / 2] = self.second
-        self.board[self.size / 2][self.size / 2 - 1] = self.second
+        self.board[self.size / 2 - 1][self.size / 2 - 1] = self.second
+        self.board[self.size / 2][self.size / 2] = self.second
+        self.board[self.size / 2 - 1][self.size / 2] = self.first
+        self.board[self.size / 2][self.size / 2 - 1] = self.first
 
         # Initialize score for both players
         self.score = [2, 2]
 
         # Bonus for each available move
-        self.mobility_bonus = self.size ** 2
+        self.mobility_bonus = 2 * (self.size ** 2)
 
         # Bonus points for each corner cell
-        self.corner_cell_bonus = self.mobility_bonus ** 2
+        self.corner_cell_bonus = self.mobility_bonus * self.size * 4
 
         # Bonus points for each stable cell
         self.stability_bonus = self.corner_cell_bonus
 
         # Points for victory
-        self.victory_bonus = int_max / 2
+        self.victory_bonus = int_max / 4
 
         # A stack of moves
         self.moves_stack = []
@@ -100,9 +100,10 @@ class ReversiEngine(object):
 
     # Get the winner
     def get_winner(self):
-        if not self.is_over():
-            raise Exception("The game is still in progress")
-        else:
+        # Checking disabled for performance reasons
+        #if not self.is_over():
+        #    raise Exception("The game is still in progress")
+        #else:
             # The first player has won
             if self.score[0] > self.score[1]:
                 return self.first
@@ -189,12 +190,22 @@ class ReversiEngine(object):
     # Get the difference between the player's score and opponent's score
     def get_score_difference(self, player):
         # Return difference between the corresponding scores
-        return self.get_score(player) - self.get_score(self.get_opponent(player))
+        return self.score[player - 1] - self.score[self.get_opponent(player) - 1]
+
+    # Get the score of the player assuming that the game is over
+    def get_final_score_difference(self, player):
+        opponent = self.get_opponent(player)
+        if self.score[player - 1] == 0:
+            return -self.cells_count
+        elif self.score[opponent - 1] == 0:
+            return self.cells_count
+        else:
+            return self.score[player - 1] - self.score[opponent - 1]
 
     # Get the difference between the number of player's available moves and his opponent's available moves
     def get_mobility_score_difference(self, player):
         return self.mobility_bonus * (
-            len(self.get_valid_moves(player)) - len(self.get_valid_moves(self.get_opponent(player))))
+            len(self.get_valid_moves(player)) - 4 * len(self.get_valid_moves(self.get_opponent(player))))
 
     # Get heuristic score of corner cells
     def get_corner_cells_score_difference(self, player):
@@ -227,26 +238,21 @@ class ReversiEngine(object):
 
         # Return the value only if the game is over
         if self.is_over():
-            winner = self.get_winner()
-            bonus_per_cell = self.victory_bonus / self.cells_count
+            bonus_per_cell = self.victory_bonus / (self.cells_count * 2)
 
             # The sign of victory score depends on the winner
-            if winner == player:
-                return self.victory_bonus + bonus_per_cell * self.get_score_difference(player)
-            elif winner == self.get_opponent(player):
-                return -self.victory_bonus + bonus_per_cell * self.get_score_difference(self.get_opponent(player))
-            else:
-                return 0
-        # Return zero if the game is in progress
+            return self.victory_bonus + bonus_per_cell * self.get_final_score_difference(player)
         else:
             return 0
 
     # Get heuristic value of current position
     def get_board_heuristics(self, player):
-        # The score is determined by current score, the number of stable cells and state of the game
-        return self.get_score_difference(player) + self.get_mobility_score_difference(
-            player) + self.get_corner_cells_score_difference(player) + self.get_stable_cells_score_difference(
-            player) + self.get_victory_score_difference(player)
+        # The score is determined by a number of values
+        return self.get_score_difference(player) +\
+            self.get_mobility_score_difference(player) +\
+            self.get_corner_cells_score_difference(player) +\
+            self.get_stable_cells_score_difference(player) +\
+            self.get_victory_score_difference(player)
 
     # Check if the cell is on the board
     def is_on_board(self, x, y):
@@ -559,6 +565,7 @@ class ReversiEngine(object):
                     # Add current move to the list of the best moves
                     best_moves.append(move[0])
 
+            print "Best: " + str(best_value)
             # Randomly return any of the best moves
             rand_best_move = randrange(len(best_moves))
             return best_moves[rand_best_move], best_value

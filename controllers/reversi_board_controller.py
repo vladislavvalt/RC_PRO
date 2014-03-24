@@ -1,13 +1,13 @@
 from controllers.common_board_controller import GAME_MODES
 from controllers.common_board_controller import CommonBoardController
 
-__author__ = 'vladvalt'
+__author__ = 'danylofitel'
 
-FILLER_MAP = {0: None, 1: "reversi_black", 2: "reversi_white", 3: "reversi_available_move_player",
-              4: "reversi_available_move_opponent"}
-
-AVAILABLE_MOVE_COLOR = "green"
-BACKGROUND_COLOR = "brown"
+FILLER_MAP = {0: None,
+              1: "reversi_black",
+              2: "reversi_white",
+              3: "reversi_available_move_black",
+              4: "reversi_available_move_white"}
 
 
 class ReversiBoardController(CommonBoardController):
