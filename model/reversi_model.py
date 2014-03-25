@@ -4,26 +4,21 @@ __author__ = 'danylofitel'
 
 
 class ReversiGameModel():
-    def __init__(self, first_player, difficulty):
+    def __init__(self, difficulty):
         self.board_size = 8
-        self.first_player = first_player
         self.difficulty = difficulty
         self.engine = ReversiEngine(self.board_size)
-        self.current_player = first_player
-
-    def get_difficulty(self):
-        return self.difficulty
-
-    def set_difficulty(self, diff):
-        if diff < 0:
-            raise Exception("Negative difficulty level")
-        self.difficulty = diff
+        self.first_player = self.engine.first
+        self.current_player = self.first_player
 
     def is_over(self):
         return self.engine.is_over()
 
     def get_winner(self):
         return self.engine.get_winner()
+
+    def switch_current_player(self):
+        self.current_player = self.engine.get_opponent(self.current_player)
 
     def get_current_player(self):
         return self.current_player
@@ -60,19 +55,16 @@ class ReversiGameModel():
             if search_depth < empty_cells:
                 threshold = self.board_size
                 if self.difficulty > 4:
-                    threshold += self.board_size
-                elif self.difficulty == 4 or self.difficulty == 3:
                     threshold += self.difficulty
+                elif self.difficulty == 4 or self.difficulty == 3 or self.difficulty == 2:
+                    threshold += self.difficulty / 2
 
                 # Search depth can be increased by the end of the game
                 if empty_cells <= threshold:
-                    search_depth = empty_cells
+                    search_depth = empty_cells + 1
 
         return search_depth
 
     def move_computer(self):
         self.engine.move_ai(self.current_player, self.get_search_depth(self.difficulty))
         self.current_player = self.engine.get_opponent(self.current_player)
-
-    def move_enemy(self):
-        pass
