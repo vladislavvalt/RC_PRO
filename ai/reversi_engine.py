@@ -47,10 +47,10 @@ class ReversiEngine(object):
         self.mobility_bonus = 2 * (self.size ** 2)
 
         # Bonus points for each corner cell
-        self.corner_cell_bonus = self.mobility_bonus ** 2
+        self.corner_cell_bonus = self.mobility_bonus ** 3
 
         # Bonus points for each stable cell
-        self.stability_bonus = self.corner_cell_bonus
+        self.stability_bonus = self.corner_cell_bonus / 2
 
         # Points for victory
         self.victory_bonus = int_max / 4
@@ -176,9 +176,9 @@ class ReversiEngine(object):
         self.undo_move(last_move[0], last_move[1][0], last_move[1][1], last_move[2])
 
     # Perform a move by current player using built-in AI
-    def move_ai(self, player, search_depth):
+    def move_ai(self, player, difficulty):
         # Find the best move for the player
-        move = self.get_best_move(player, search_depth)
+        move = self.get_best_move(player, difficulty)
 
         # Perform a move
         return self.move(player, move[0][0], move[0][1])
@@ -257,11 +257,12 @@ class ReversiEngine(object):
     # Get heuristic value of current position
     def get_board_heuristics(self, player):
         # The score is determined by a number of values
-        return self.get_score_difference(player) +\
-            self.get_mobility_score_difference(player) +\
-            self.get_corner_cells_score_difference(player) +\
-            self.get_stable_cells_score_difference(player) +\
-            self.get_victory_score_difference(player)
+        if self.is_over():
+            return self.get_victory_score_difference(player)
+        else:
+            return self.get_mobility_score_difference(player) +\
+                self.get_corner_cells_score_difference(player) +\
+                self.get_stable_cells_score_difference(player)
 
     # Check if the cell is on the board
     def is_on_board(self, x, y):
@@ -542,8 +543,41 @@ class ReversiEngine(object):
 
         return -max_found
 
+    # Get the search depth depending on difficulty level and the game's current state
+    def get_search_depth(self, difficulty):
+        # Search depth directly depends on the difficulty level
+        search_depth = difficulty + 1
+
+        total_cells = self.cells_count
+        filled_cells = self.get_score(1) + self.get_score(2)
+        empty_cells = total_cells - filled_cells
+
+        # Tweaks for hard levels
+        if difficulty >= 2:
+            # Search depth can be increased when most of the cells are filled
+            if empty_cells < filled_cells:
+                # Every 10% of filled cells after 50% increase the search depth by 1
+                search_depth += int(10 * (filled_cells / float(total_cells) - 0.5))
+
+            # It is possible to search to the end at some point
+            if search_depth < empty_cells:
+                threshold = self.size
+                if difficulty > 4:
+                    threshold += difficulty
+                elif difficulty == 4 or difficulty == 3 or difficulty == 2:
+                    threshold += difficulty / 2
+
+                # Search depth can be increased by the end of the game
+                if empty_cells <= threshold:
+                    search_depth = empty_cells + 1
+
+        return search_depth
+
     # Get the best possible move for the player according to game heuristics
-    def get_best_move(self, player, search_depth):
+    def get_best_move(self, player, difficulty):
+        # Calculate the optimal search depth for current state given the difficulty level
+        search_depth = self.get_search_depth(difficulty)
+
         # Get all possible moves along with their values for the player
         moves = self.get_move_evaluations(player, search_depth, int_max)
 

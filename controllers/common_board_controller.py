@@ -8,8 +8,8 @@ FILLERS = {"checker_white": "Apple.png",
            "checker_king_black": "king_natural_Apple.png",
            "reversi_white": "WBSmiley.png",
            "reversi_black": "BWSmiley.png",
-           "reversi_available_move_white": "Star.png",
-           "reversi_available_move_black": "Star.png"}
+           "reversi_available_move_white": "Available_move_white.png",
+           "reversi_available_move_black": "Available_move_black.png"}
 
 IMAGE_LOCATION = os.path.join(os.path.dirname(__file__), '../ui/pictures/')
 
