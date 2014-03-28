@@ -50,11 +50,17 @@ class ReversiBoardController(CommonBoardController):
 
         if not self.the_end:
             if self.model.is_over():
-                self.write_to_console("Game over!")
+                self.write_to_console("Game over!!!")
                 if self.model.get_winner() == 0:
                     self.write_to_console("Draw...")
                 else:
-                    self.write_to_console("The winner is player " + str(self.model.get_winner()))
+                    if self.game_mode == GAME_MODES["playerVSPlayer"]:
+                        self.write_to_console("Player " + str(self.model.get_winner()) + " has won!!!")
+                    elif self.game_mode == GAME_MODES["playerVSPRO"]:
+                        if self.model.get_winner() == self.computer:
+                            self.write_to_console("I'm the best!!! Keep trying, looser!")
+                        else:
+                            self.write_to_console("Okay, okay, this time you win!")
                 self.the_end = True
 
     def move_human(self, x, y):
@@ -64,7 +70,7 @@ class ReversiBoardController(CommonBoardController):
                 self.model.move_human(x, y)
             elif available_moves == [self.model.engine.pass_move]:
                 self.model.move_human(available_moves[0][0], available_moves[0][1])
-                self.write_to_console("The player passes")
+                self.write_to_console("You pass")
             self.fill_board()
 
     def move_computer(self):

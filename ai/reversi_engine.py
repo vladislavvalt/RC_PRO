@@ -44,13 +44,13 @@ class ReversiEngine(object):
         self.score = [2, 2]
 
         # Bonus for each available move
-        self.mobility_bonus = 2 * (self.size ** 2)
+        self.mobility_bonus = self.size ** 2
 
         # Bonus points for each corner cell
         self.corner_cell_bonus = self.mobility_bonus ** 3
 
         # Bonus points for each stable cell
-        self.stability_bonus = self.corner_cell_bonus / 2
+        self.stability_bonus = self.corner_cell_bonus
 
         # Points for victory
         self.victory_bonus = int_max / 4

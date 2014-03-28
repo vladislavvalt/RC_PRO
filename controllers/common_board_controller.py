@@ -6,10 +6,10 @@ FILLERS = {"checker_white": "Apple.png",
            "checker_black": "Vista.png",
            "checker_king_white": "king_Apple.png",
            "checker_king_black": "king_natural_Apple.png",
-           "reversi_white": "WBSmiley.png",
-           "reversi_black": "BWSmiley.png",
-           "reversi_available_move_white": "Available_move_white.png",
-           "reversi_available_move_black": "Available_move_black.png"}
+           "reversi_white": "Piece_White.png",
+           "reversi_black": "Piece_Black.png",
+           "reversi_available_move_white": "Available_Move_White.png",
+           "reversi_available_move_black": "Available_Move_Black.png"}
 
 IMAGE_LOCATION = os.path.join(os.path.dirname(__file__), '../ui/pictures/')
 
