@@ -47,10 +47,10 @@ class ReversiEngine(object):
         self.mobility_bonus = self.size ** 2
 
         # Bonus points for each corner cell
-        self.corner_cell_bonus = self.mobility_bonus ** 4
+        self.corner_cell_bonus = self.mobility_bonus ** 2
 
         # Bonus points for each stable cell
-        self.stability_bonus = self.corner_cell_bonus / 2
+        self.stability_bonus = self.corner_cell_bonus
 
         # Points for victory
         self.victory_bonus = int_max / 4
@@ -226,7 +226,7 @@ class ReversiEngine(object):
                     if self.board[neighbour[0]][neighbour[1]] == player:
                         corners_count -= 0.5
                     elif self.board[neighbour[0]][neighbour[1]] == opponent:
-                        corners_count += 0.5
+                        corners_count += 0.25
 
         # Each corner cell costs additional bonus points
         return int(self.corner_cell_bonus * corners_count)
