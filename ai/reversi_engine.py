@@ -44,10 +44,10 @@ class ReversiEngine(object):
         self.score = [2, 2]
 
         # Bonus for each available move
-        self.mobility_bonus = self.size ** 2
+        self.mobility_bonus = 100
 
         # Bonus points for each corner cell
-        self.corner_cell_bonus = self.mobility_bonus ** 2
+        self.corner_cell_bonus = 100 * self.mobility_bonus
 
         # Bonus points for each stable cell
         self.stability_bonus = self.corner_cell_bonus
@@ -204,8 +204,18 @@ class ReversiEngine(object):
 
     # Get the difference between the number of player's available moves and his opponent's available moves
     def get_mobility_score_difference(self, player):
-        return self.mobility_bonus * (
-            len(self.get_valid_moves(player)) - 8 * len(self.get_valid_moves(self.get_opponent(player))))
+        # Get valid moves for both players
+        player_moves = self.get_valid_moves(player)
+        opponent_moves = self.get_valid_moves(self.get_opponent(player))
+
+        # A pass move should not be considered
+        if player_moves == [self.pass_move]:
+            player_moves = []
+
+        if opponent_moves == [self.pass_move]:
+            opponent_moves = []
+
+        return self.mobility_bonus * (len(player_moves) - 8 * len(opponent_moves))
 
     # Get heuristic score of corner cells
     def get_corner_cells_score_difference(self, player):
@@ -238,28 +248,25 @@ class ReversiEngine(object):
             len(self.get_stable_cells(player)) - 4 * len(self.get_stable_cells(self.get_opponent(player))))
 
     # Get heuristic score for the victory of one of the players
+    # Can be called only after the game is over
     def get_victory_score_difference(self, player):
         # Value of victory in terms of score
         # It must significantly exceed the maximal score actually possible\
         # to prevent situations where loss scores more than victory
 
-        # Return the value only if the game is over
-        if self.is_over():
-            winner = self.get_winner()
+        winner = self.get_winner()
 
-            if winner == player:
-                bonus = self.victory_bonus
-            elif winner == self.get_opponent(player):
-                bonus = -self.victory_bonus
-            else:
-                return 0
-
-            bonus_per_cell = self.victory_bonus / self.cells_count
-            bonus += bonus_per_cell * self.get_final_score_difference(player)
-
-            return bonus
+        if winner == player:
+            bonus = self.victory_bonus
+        elif winner == self.get_opponent(player):
+            bonus = -self.victory_bonus
         else:
             return 0
+
+        bonus_per_cell = self.victory_bonus / self.cells_count
+        bonus += bonus_per_cell * self.get_final_score_difference(player)
+
+        return bonus
 
     # Get heuristic value of current position
     def get_board_heuristics(self, player):
