@@ -229,14 +229,14 @@ class ReversiEngine(object):
             if self.board[c[0]][c[1]] == player:
                 corners_count += 1
             elif self.board[c[0]][c[1]] == opponent:
-                corners_count -= 4
+                corners_count -= 8
             else:
                 # Check if the corner cells is potentially going to be occupied
                 for neighbour in self.get_corner_neighbours(c[0], c[1]):
                     if self.board[neighbour[0]][neighbour[1]] == player:
-                        corners_count -= 0.5
+                        corners_count -= 0.25
                     elif self.board[neighbour[0]][neighbour[1]] == opponent:
-                        corners_count += 0.25
+                        corners_count += 0.2
 
         # Each corner cell costs additional bonus points
         return int(self.corner_cell_bonus * corners_count)
@@ -589,12 +589,12 @@ class ReversiEngine(object):
                 search_depth += int(10 * (filled_cells / float(total_cells) - 0.5))
 
             # It is possible to search to the end at some point
-            if search_depth < empty_cells:
+            if search_depth <= empty_cells:
                 threshold = self.size
                 if difficulty > 4:
                     threshold += difficulty
                 elif difficulty == 4 or difficulty == 3 or difficulty == 2:
-                    threshold += difficulty / 2
+                    threshold += difficulty
 
                 # Search depth can be increased by the end of the game
                 if empty_cells <= threshold:
