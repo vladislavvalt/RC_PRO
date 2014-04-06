@@ -23,7 +23,7 @@ def checkers(game_bot):
     model = CheckersGameModel()
     game_bot.model = model
     controller = CheckersBoardController(model=model, bot=game_bot)
-    controller.game_mode = GAME_MODES["playerVSPRO"]
+    controller.game_mode = GAME_MODES["playerVSPro"]
     controller.bot_move_delay = 0.3
     controller.should_show_bot_play_on_board = True
     controller.should_log_the_game = True

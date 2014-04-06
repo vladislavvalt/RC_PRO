@@ -13,7 +13,7 @@ FILLERS = {"checker_white": "Apple.png",
 
 IMAGE_LOCATION = os.path.join(os.path.dirname(__file__), '../ui/pictures/')
 
-GAME_MODES = {"playerVSPlayer": 1, "playerVSPRO": 2, "proVSPro": 3, "proVSEnemy": 4}
+GAME_MODES = {"playerVSPlayer": 1, "playerVSPro": 2, "proVSPro": 3, "proVSEnemy": 4}
 
 
 class CommonBoardController:

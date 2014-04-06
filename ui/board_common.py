@@ -40,7 +40,7 @@ class BoardCommonUI(Frame):
             Grid.rowconfigure(self.grid, y, weight=1)
 
     def centerWindow(self):
-        w = 800
+        w = 640
         h = 640
         sw = self.parent.winfo_screenwidth()
         sh = self.parent.winfo_screenheight()

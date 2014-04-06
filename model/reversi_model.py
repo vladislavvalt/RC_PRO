@@ -37,5 +37,6 @@ class ReversiGameModel():
         self.current_player = self.engine.get_opponent(self.current_player)
 
     def move_computer(self):
-        self.engine.move_ai(self.current_player, self.difficulty)
+        move = self.engine.move_ai(self.current_player, self.difficulty)
         self.current_player = self.engine.get_opponent(self.current_player)
+        return move

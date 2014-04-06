@@ -181,7 +181,7 @@ class ReversiEngine(object):
         move = self.get_best_move(player, difficulty)
 
         # Perform a move
-        return self.move(player, move[0][0], move[0][1])
+        return move[0], self.move(player, move[0][0], move[0][1])
 
     # Get the player's score
     def get_score(self, player):
@@ -215,7 +215,7 @@ class ReversiEngine(object):
         if opponent_moves == [self.pass_move]:
             opponent_moves = []
 
-        return self.mobility_bonus * (len(player_moves) - 8 * len(opponent_moves))
+        return self.mobility_bonus * (len(player_moves) - 5 * len(opponent_moves))
 
     # Get heuristic score of corner cells
     def get_corner_cells_score_difference(self, player):
@@ -229,14 +229,14 @@ class ReversiEngine(object):
             if self.board[c[0]][c[1]] == player:
                 corners_count += 1
             elif self.board[c[0]][c[1]] == opponent:
-                corners_count -= 8
+                corners_count -= 5
             else:
                 # Check if the corner cells is potentially going to be occupied
                 for neighbour in self.get_corner_neighbours(c[0], c[1]):
                     if self.board[neighbour[0]][neighbour[1]] == player:
                         corners_count -= 0.25
                     elif self.board[neighbour[0]][neighbour[1]] == opponent:
-                        corners_count += 0.2
+                        corners_count += 0.125
 
         # Each corner cell costs additional bonus points
         return int(self.corner_cell_bonus * corners_count)
@@ -637,7 +637,7 @@ class ReversiEngine(object):
                     # Add current move to the list of the best moves
                     best_moves.append(move[0])
 
-            print "Best: " + str(best_value) + " on depth " + str(search_depth)
+            print "Best move value = " + str(best_value) + ", depth = " + str(search_depth)
             # Randomly return any of the best moves
             rand_best_move = randrange(len(best_moves))
             return best_moves[rand_best_move], best_value
