@@ -54,12 +54,20 @@ class ReversiBoardController(CommonBoardController):
                 if self.model.get_winner() == 0:
                     self.write_to_console("Draw...")
                 else:
+                    winner = self.model.get_winner()
+                    loser = self.model.engine.get_opponent(winner)
+                    score_winner = self.model.engine.get_score(winner)
+                    score_loser = self.model.engine.get_score(loser)
+                    score = str(score_winner) + ":" + str(score_loser)
+
                     if self.game_mode == GAME_MODES["playerVSPlayer"]:
-                        self.write_to_console("Player " + str(self.model.get_winner()) + " has won!!!")
+                        self.write_to_console("Player " + str(winner) + " has won with score " + score)
                     elif self.game_mode == GAME_MODES["playerVSPro"]:
                         if self.model.get_winner() == self.computer:
+                            self.write_to_console("Computer has won with score " + score)
                             self.write_to_console("I'm the best here!!! Keep trying, looser!")
                         else:
+                            self.write_to_console("Player has won with score " + score)
                             self.write_to_console("Okay, okay, this time you win!")
                 self.game_finished = True
 
@@ -67,11 +75,18 @@ class ReversiBoardController(CommonBoardController):
         if not self.model.is_over():
             available_moves = self.model.get_available_moves()
             if (x, y) in available_moves:
+                move = "(" + str(x) + ", " + str(y) + ")"
                 self.model.move_human(x, y)
-                self.write_to_console("Player " + str(self.model.get_current_player()) + " moves to (" + str(x) + ", " + str(y) + ")")
+                if self.game_mode == GAME_MODES["playerVSPlayer"]:
+                    self.write_to_console("Player " + str(self.model.get_current_player()) + " moves to " + move)
+                elif self.game_mode == GAME_MODES["playerVSPro"]:
+                    self.write_to_console("Player moves to " + move)
             elif available_moves == [self.model.engine.pass_move]:
                 self.model.move_human(available_moves[0][0], available_moves[0][1])
-                self.write_to_console("Player " + str(self.model.get_current_player()) + " passes")
+                if self.game_mode == GAME_MODES["playerVSPlayer"]:
+                    self.write_to_console("Player " + str(self.model.get_current_player()) + " passes")
+                elif self.game_mode == GAME_MODES["playerVSPro"]:
+                    self.write_to_console("Player passes")
             self.fill_board()
 
     def move_computer(self):

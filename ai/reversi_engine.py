@@ -50,7 +50,7 @@ class ReversiEngine(object):
         self.corner_cell_bonus = 100 * self.mobility_bonus
 
         # Bonus points for each stable cell
-        self.stability_bonus = self.corner_cell_bonus
+        self.stability_bonus = self.corner_cell_bonus / 2
 
         # Points for victory
         self.victory_bonus = int_max / 4
@@ -215,7 +215,7 @@ class ReversiEngine(object):
         if opponent_moves == [self.pass_move]:
             opponent_moves = []
 
-        return self.mobility_bonus * (len(player_moves) - 5 * len(opponent_moves))
+        return self.mobility_bonus * (len(player_moves) - 8 * len(opponent_moves))
 
     # Get heuristic score of corner cells
     def get_corner_cells_score_difference(self, player):
@@ -229,14 +229,14 @@ class ReversiEngine(object):
             if self.board[c[0]][c[1]] == player:
                 corners_count += 1
             elif self.board[c[0]][c[1]] == opponent:
-                corners_count -= 5
+                corners_count -= 8
             else:
                 # Check if the corner cells is potentially going to be occupied
                 for neighbour in self.get_corner_neighbours(c[0], c[1]):
                     if self.board[neighbour[0]][neighbour[1]] == player:
                         corners_count -= 0.25
                     elif self.board[neighbour[0]][neighbour[1]] == opponent:
-                        corners_count += 0.125
+                        corners_count += 0.05
 
         # Each corner cell costs additional bonus points
         return int(self.corner_cell_bonus * corners_count)
@@ -245,7 +245,7 @@ class ReversiEngine(object):
     def get_stable_cells_score_difference(self, player):
         # All stable cells provide additional bonus score
         return self.stability_bonus * (
-            len(self.get_stable_cells(player)) - 4 * len(self.get_stable_cells(self.get_opponent(player))))
+            len(self.get_stable_cells(player)) - 8 * len(self.get_stable_cells(self.get_opponent(player))))
 
     # Get heuristic score for the victory of one of the players
     # Can be called only after the game is over
@@ -274,9 +274,8 @@ class ReversiEngine(object):
         if self.is_over():
             return self.get_victory_score_difference(player)
         else:
-            return self.get_mobility_score_difference(player) + \
-                   self.get_corner_cells_score_difference(player) + \
-                   self.get_stable_cells_score_difference(player)
+            return self.get_mobility_score_difference(player) + self.get_corner_cells_score_difference(
+                player) + self.get_stable_cells_score_difference(player)
 
     # Check if the cell is on the board
     def is_on_board(self, x, y):
@@ -379,7 +378,8 @@ class ReversiEngine(object):
         for corner in self.get_corners():
             if self.board[corner[0]][corner[1]] == player:
                 # The corner is already stable
-                stable_cells.append(corner)
+                if corner not in stable_cells:
+                    stable_cells.append(corner)
 
                 # Move along the edges from current corner and find other stable cells
                 for direction in corner_directions:
