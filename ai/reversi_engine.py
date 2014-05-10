@@ -637,7 +637,7 @@ class ReversiEngine(object):
                     # Add current move to the list of the best moves
                     best_moves.append(move[0])
 
-            print "Best move value = " + str(best_value) + ", depth = " + str(search_depth)
+            print "Value = " + str(best_value) + ", depth = " + str(search_depth)
             # Randomly return any of the best moves
             rand_best_move = randrange(len(best_moves))
             return best_moves[rand_best_move], best_value

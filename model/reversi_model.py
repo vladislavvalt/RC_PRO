@@ -34,9 +34,9 @@ class ReversiGameModel():
 
     def move_human(self, x, y):
         self.engine.move(self.current_player, x, y)
-        self.current_player = self.engine.get_opponent(self.current_player)
+        self.switch_current_player()
 
     def move_computer(self):
         move = self.engine.move_ai(self.current_player, self.difficulty)
-        self.current_player = self.engine.get_opponent(self.current_player)
+        self.switch_current_player()
         return move

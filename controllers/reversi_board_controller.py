@@ -11,12 +11,16 @@ FILLER_MAP = {0: None,
 
 
 class ReversiBoardController(CommonBoardController):
-    def __init__(self, model, mode):
+    def __init__(self, model, mode, player_moves_first):
         CommonBoardController.__init__(self, model=model)
         self.game_mode = mode
         self.game_finished = False
         if mode == GAME_MODES["playerVSPro"]:
-            self.computer = self.model.get_current_opponent()
+            if player_moves_first:
+                self.computer = self.model.get_current_opponent()
+            else:
+                self.computer = self.model.get_current_player()
+                self.model.move_computer()
 
     def fill_board(self):
         self.board.parent.title('Reversi')
