@@ -1,4 +1,4 @@
-from Tkinter import Tk
+from tkinter import Tk
 from controllers.reversi_board_controller import ReversiBoardController
 from controllers.reversi_board_controller import GAME_MODES
 from model.reversi_model import ReversiGameModel
@@ -21,5 +21,6 @@ def reversi():
     app = BoardCommonUI(root, controller)
     controller.fill_board()
     root.mainloop()
+
 
 reversi()

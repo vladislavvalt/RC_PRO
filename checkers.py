@@ -37,7 +37,7 @@ def checkers(game_bot):
 
 def improve_skill(bot, number_of_games):
     for i in range(number_of_games):
-        print "IMPROVE ITERATION NUMBER " + str(i)
+        print("IMPROVE ITERATION NUMBER " + str(i))
         model = CheckersGameModel()
         bot.model = model
         controller = CheckersBoardController(model=model, bot=bot)
@@ -49,8 +49,8 @@ def improve_skill(bot, number_of_games):
         controller.start_bot_play()
         while not controller.the_end:
             time.sleep(0.001)
-        print
-        print
+        print()
+        print()
 
 bot = CheckersBot(None)
 #improve_skill(bot, 2)

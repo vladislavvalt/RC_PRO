@@ -1,4 +1,4 @@
-from Tkinter import *
+from tkinter import *
 from controllers.common_board_controller import CommonBoardController
 
 __author__ = 'vladvalt'

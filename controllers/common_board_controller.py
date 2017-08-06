@@ -60,9 +60,9 @@ class CommonBoardController:
         self.board.cells[x][y].config(bg=color)
 
     def on_cell_click(self, event, x, y):
-        print "click ON CELL"
-        print "x = ", x
-        print "y = ", y
+        print("click ON CELL")
+        print("x = ", x)
+        print("y = ", y)
 
     #show possible moves on the board
     def show_available_moves(self):

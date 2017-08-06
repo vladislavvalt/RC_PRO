@@ -35,10 +35,10 @@ class ReversiEngine(object):
             self.board.append([self.empty for i in range(self.size)])
 
         # Fill the four squares in the middle
-        self.board[self.size / 2 - 1][self.size / 2 - 1] = self.second
-        self.board[self.size / 2][self.size / 2] = self.second
-        self.board[self.size / 2 - 1][self.size / 2] = self.first
-        self.board[self.size / 2][self.size / 2 - 1] = self.first
+        self.board[self.size // 2 - 1][self.size // 2 - 1] = self.second
+        self.board[self.size // 2][self.size // 2] = self.second
+        self.board[self.size // 2 - 1][self.size // 2] = self.first
+        self.board[self.size // 2][self.size // 2 - 1] = self.first
 
         # Initialize score for both players
         self.score = [2, 2]
@@ -637,7 +637,7 @@ class ReversiEngine(object):
                     # Add current move to the list of the best moves
                     best_moves.append(move[0])
 
-            print "Value = " + str(best_value) + ", depth = " + str(search_depth)
+            print("Value = " + str(best_value) + ", depth = " + str(search_depth))
             # Randomly return any of the best moves
             rand_best_move = randrange(len(best_moves))
             return best_moves[rand_best_move], best_value
